@@ -96,9 +96,9 @@ class Game:
         elif square == sq_special:
             minigame_won = self.start_minigame()
             if minigame_won:
-                return self.play_turn(self.players[p])
+                return self.play_turn(p)
             else:
-                return self.play_turn(self.players[p], backwards=True)
+                return self.play_turn(p, backwards=True)
         else:
             return False
 
