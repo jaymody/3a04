@@ -3,6 +3,8 @@ import random
 import pygame
 import pygame_menu
 
+from pygame import Rect, Surface
+
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -12,20 +14,20 @@ black = (0, 0, 0)
 
 
 class Game:
-    def __init__(self, w, h, s, num_players):
+    def __init__(self, screen, w, h, num_players):
         """Initialize a new game."""
         self.board = Board()
 
-        self.screen = pygame.display.set_mode([w, h])
-        background = pygame.Surface([w, h])
-        background.fill(white)
-        self.screen.blit(background, (0, 0))
+        self.screen = screen
 
+        s = h // 12
         coords = list(map(self.board.get_coord, list(range(95))))
-        self.squares = [pygame.Rect(s + c * s, h - s - r * s, s, s) for r, c in coords]
+        self.squares = [Rect(s + c * s, h - 2 * s - r * s, s, s) for r, c in coords]
 
         self.players = [0] * num_players
         self.turn = 0
+
+        self.play_game()
 
     def roll(self):
         return random.randint(1, 6)
@@ -37,6 +39,8 @@ class Game:
     def display_board(self):
         # each square is about 80 pixels
         # draw_snake = lambda x, y: pygame.draw.line(self.screen)
+        self.screen.fill(white)
+
         for sq in self.squares:
             pygame.draw.rect(self.screen, black, sq)
 
@@ -106,13 +110,13 @@ class Game:
         """Main game loop."""
         self.display_board()
         pygame.display.update()
+
         while True:
-            pass
-        # while True:
-        #     if self.play_turn(self.turn % len(self.players)):
-        #         print(f"p {self.turn+1} WON")
-        #         break
-        #     self.turn += 1
+            print(self.players)
+            if self.play_turn(self.turn % len(self.players)):
+                print(f"p {(self.turn %  len(self.players))+1} WON")
+                break
+            self.turn += 1
 
 
 class Board:
@@ -166,15 +170,14 @@ class Board:
 
 
 if __name__ == "__main__":
-    width = 1000
-    height = 700
+    width = 1280
+    height = 720
     theme = pygame_menu.themes.THEME_SOLARIZED
-
-    game = Game(w=width, h=height, s=50, num_players=2)
 
     pygame.init()
     # pygame.font.init()
     # Font = pygame.font.SysFont("comicsans", 20)
+    screen = pygame.display.set_mode([width, height])
     pygame.display.set_caption("Super Snakes and Ladders")
     clock = pygame.time.Clock()
 
@@ -191,8 +194,8 @@ if __name__ == "__main__":
 
     # main menu
     menu = pygame_menu.Menu("Super Snakes and Ladders", width, height, theme=theme)
-    menu.add.button("Play", game.play_game)
+    menu.add.button("Play", lambda: Game(screen, w=width, h=height, num_players=2))
     menu.add.button("Help", help_menu)
     menu.add.button("Settings", settings_menu)
     menu.add.button("Quit", pygame_menu.events.EXIT)
-    menu.mainloop(game.screen)
+    menu.mainloop(screen)
