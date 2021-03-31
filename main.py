@@ -201,7 +201,7 @@ class Board:
             bottom most row, column 0 is leftmost row.
         """
         row = pos // 10
-        col = pos % 10
+        col = pos % 10 if row % 2 == 0 else (9 - pos % 10)
         return row, col
 
     def get_square(self, pos):
