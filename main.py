@@ -1,3 +1,4 @@
+import sys
 import random
 
 import pygame
@@ -14,15 +15,20 @@ black = (0, 0, 0)
 
 
 class Game:
-    def __init__(self, screen, w, h, num_players):
+    def __init__(self, screen, font, w, h, num_players):
         """Initialize a new game."""
         self.board = Board()
 
         self.screen = screen
+        self.font = font
 
         s = h // 12
-        coords = list(map(self.board.get_coord, list(range(95))))
+        coords = list(map(self.board.get_coord, list(range(100))))
         self.squares = [Rect(s + c * s, h - 2 * s - r * s, s, s) for r, c in coords]
+
+        self.button_roll = Rect(s * 12, s * 1, s * 4, s)
+
+        self.w, self.h, self.s = w, h, s
 
         self.players = [0] * num_players
         self.turn = 0
@@ -32,17 +38,9 @@ class Game:
     def roll(self):
         return random.randint(1, 6)
 
-    def start_minigame(self):
+    def play_minigame(self):
         # TODO: implement this
         return random.random() > 0.5
-
-    def display_board(self):
-        # each square is about 80 pixels
-        # draw_snake = lambda x, y: pygame.draw.line(self.screen)
-        self.screen.fill(white)
-
-        for sq in self.squares:
-            pygame.draw.rect(self.screen, black, sq)
 
     def animate_move(self):
         pass
@@ -90,15 +88,15 @@ class Game:
         sq_special = self.board.SPECIAL_SQUARE
 
         if square == sq_snake:
-            minigame_won = self.start_minigame()
+            minigame_won = self.play_minigame()
             if not minigame_won:
                 self.players[p] = self.board.snakes[self.players[p]]
         elif square == sq_ladder:
-            minigame_won = self.start_minigame()
+            minigame_won = self.play_minigame()
             if minigame_won:
                 self.players[p] = self.board.ladders[self.players[p]]
         elif square == sq_special:
-            minigame_won = self.start_minigame()
+            minigame_won = self.play_minigame()
             if minigame_won:
                 return self.play_turn(p)
             else:
@@ -106,17 +104,67 @@ class Game:
         else:
             return False
 
-    def play_game(self):
-        """Main game loop."""
-        self.display_board()
+    def display(self):
+        self.screen.fill(white)
+
+        for i, sq in enumerate(self.squares):
+            pygame.draw.rect(self.screen, black, sq, width=3)
+            self.screen.blit(self.font.render(str(i + 1), True, black), sq.topleft)
+
+        for start, end in self.board.snakes.items():
+            pygame.draw.line(
+                self.screen,
+                green,
+                self.squares[start].center,
+                self.squares[end].center,
+                width=4,
+            )
+
+        for start, end in self.board.ladders.items():
+            pygame.draw.line(
+                self.screen,
+                red,
+                self.squares[start].center,
+                self.squares[end].center,
+                width=4,
+            )
+
+        for pos in self.board.special:
+            pygame.draw.circle(
+                self.screen,
+                blue,
+                self.squares[pos].center,
+                radius=4,
+            )
+
+        pygame.draw.rect(self.screen, blue, self.button_roll)
+
+        for i, player in enumerate(self.players):
+            self.screen.blit(
+                self.font.render(str(i + 1), True, black),
+                self.squares[player].center,
+            )
+
         pygame.display.update()
 
+    def play_game(self):
+        """Main game loop."""
+        self.display()
         while True:
-            print(self.players)
-            if self.play_turn(self.turn % len(self.players)):
-                print(f"p {(self.turn %  len(self.players))+1} WON")
-                break
-            self.turn += 1
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = event.pos
+                    if self.button_roll.collidepoint(mouse_pos):
+                        if self.play_turn(self.turn % len(self.players)):
+                            print(f"p {(self.turn %  len(self.players))+1} WON")
+                            return
+                        self.turn += 1
+
+                self.display()
 
 
 class Board:
@@ -175,8 +223,8 @@ if __name__ == "__main__":
     theme = pygame_menu.themes.THEME_SOLARIZED
 
     pygame.init()
-    # pygame.font.init()
-    # Font = pygame.font.SysFont("comicsans", 20)
+    pygame.font.init()
+    font = pygame.font.SysFont("timesnewroman", 14)
     screen = pygame.display.set_mode([width, height])
     pygame.display.set_caption("Super Snakes and Ladders")
     clock = pygame.time.Clock()
@@ -194,7 +242,9 @@ if __name__ == "__main__":
 
     # main menu
     menu = pygame_menu.Menu("Super Snakes and Ladders", width, height, theme=theme)
-    menu.add.button("Play", lambda: Game(screen, w=width, h=height, num_players=2))
+    menu.add.button(
+        "Play", lambda: Game(screen, font, w=width, h=height, num_players=2)
+    )
     menu.add.button("Help", help_menu)
     menu.add.button("Settings", settings_menu)
     menu.add.button("Quit", pygame_menu.events.EXIT)
