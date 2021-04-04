@@ -369,16 +369,22 @@ class Game:
 
     def play_game(self):
         """Main game loop"""
+        # draw
         self.prompt = f"P{(self.turn % len(self.players)) + 1}'s turn"
         self.draw_board()
         self.draw_players()
         pygame.display.update()
+
+        # game loop
         while True:
+            # game logic
             game_won = self.play_turn()
             if game_won:
                 print(f"P{self.turn} WON")
                 return
             self.turn = (self.turn + 1) % len(self.players)
+
+            # draw
             self.prompt += f", P{(self.turn % len(self.players)) + 1}'s turn"
             self.draw_board()
             self.draw_players()
