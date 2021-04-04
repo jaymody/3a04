@@ -35,7 +35,7 @@ def smooth_motion(t, b, c):
     # accelerate / decelerate motion
     # linear accelaration, quadratic speed, cubic distance
     # speed = -ax^2 + abx
-    # distance = derivative of speed
+    # distance = integral of speed
     assert b >= 0
     assert c >= 0
     assert 0 <= t <= b
