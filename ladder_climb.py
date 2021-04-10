@@ -16,24 +16,25 @@ class LadderClimb:
         self.w, self.h = w, h
         self.fps = fps
 
+        n_ladders = 3
+        lad_h = 600
+        lad_w = 150
+
+        cx, cy = w // 2, h // 2  # center x, center y
+        hw, hh = lad_w // 2, lad_h // 2  # half ladder width, half ladder height
+        self.ladder_rects = [
+            pygame.Rect(cx - 3 * hw, cy - hh, lad_w, lad_h),
+            pygame.Rect(cx - 1 * hw, cy - hh, lad_w, lad_h),
+            pygame.Rect(cx + 1 * hw, cy - hh, lad_w, lad_h),
+        ]
+
     def draw(self):
         # clear screen and draw background
         self.screen.fill(white)
 
-        # draw some text
-        self.screen.blit(
-            self.font.render(f"difficulty = {self.difficulty}", True, black),
-            (200, 200),
-        )
-        import time
-
-        self.screen.blit(
-            self.font.render(f"time = {time.time()}", True, black),
-            (300, 300),
-        )
-
-        # draw a square
-        pygame.draw.rect(self.screen, black, pygame.Rect(100, 100, 20, 20))
+        # draw ladders
+        for rect in self.ladder_rects:
+            pygame.draw.rect(self.screen, black, rect, width=3)
 
     def play_minigame(self):
         """Return True if minigame is won, else False"""
