@@ -5,6 +5,7 @@ import pygame
 from pygame import Rect, Surface
 
 from dummy_minigame import DummyMinigame
+from simon_says import SimonSays
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -44,7 +45,7 @@ def smooth_motion(t, b, c):
 
 
 class Game:
-    minigames = [DummyMinigame]
+    minigames = [SimonSays]
 
     def __init__(self, screen, clock, font, w, h, fps, num_players):
         """Game instance of Super Snakes and Ladders
