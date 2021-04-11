@@ -113,8 +113,6 @@ class SnakeGame:
                 game_close = True
             x1 += x1_change
             y1 += y1_change
-            #print("x = ", x1)
-            #print("y = ", y1)
             dis.fill(bg_green)
             pygame.draw.rect(dis, green, [foodx, foody, self.snake_block, self.snake_block])
             snake_Head = []
@@ -136,8 +134,6 @@ class SnakeGame:
             if x1 == foodx and y1 == foody:
                 foodx = round(random.randrange(0, self.w - self.snake_block) / 40.0) * 40.0
                 foody = round(random.randrange(0, self.h - self.snake_block) / 40.0) * 40.0
-                print(foodx)
-                print(foody)
                 if self.difficulty == 'easy':
                     Length_of_snake += 2
                 elif self.difficulty == 'medium':
