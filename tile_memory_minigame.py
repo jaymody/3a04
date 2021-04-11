@@ -47,14 +47,15 @@ def generate_board():
     tiles = board_width**2
     board = []
     #tiles to memorize (4 for 3x3, 7 for 4x4, 11 for 5x5, 16 for 6x6)
-    board.append([True]*(tiles * (4//9))) 
+    for i in range(tiles * 4 //9):
+        board.append([True])
     #blank tiles
-    board.append([False]*(tiles - (tiles * (4//9)))) 
+    for i in range(tiles - (tiles * 4 //9)):
+        board.append([False]) 
     #randomizes tile placement
     random.shuffle(board) 
-
     #converts 1D array of randomized True/False values (tiles) into 2D array
-    board2D = [board[i:i + board_width] for i in range (0, board_width**2, board_width) ] 
+    board2D = [board[i:i + board_width] for i in range (0, board_width**2, board_width) ]
 
     return board2D
 
