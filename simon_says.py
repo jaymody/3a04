@@ -151,7 +151,7 @@ class SimonSays:
             # undraw grey rect
             pygame.draw.rect(self.screen, pink, rect)
             pygame.display.update()
-
+        
         cur_square = 0
         while True:
             # exit the game if the user wants
