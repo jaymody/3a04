@@ -35,7 +35,7 @@ def game_start_animation(board):
     pygame.time.wait(3000)
 
     # all tiles to be memorized are flipped
-    empty = [[False] * board_width] * board_width
+    empty = [[False]*board_width for _ in range(board_width)]
     draw_board(board)
     pygame.time.wait(3000)
     draw_board(empty)
@@ -48,14 +48,14 @@ def generate_board():
     board = []
     #tiles to memorize (4 for 3x3, 7 for 4x4, 11 for 5x5, 16 for 6x6)
     for i in range(tiles * 4 //9):
-        board.append([True])
+        board.append(True)
     #blank tiles
     for i in range(tiles - (tiles * 4 //9)):
-        board.append([False]) 
+        board.append(False) 
     #randomizes tile placement
     random.shuffle(board) 
     #converts 1D array of randomized True/False values (tiles) into 2D array
-    board2D = [board[i:i + board_width] for i in range (0, board_width**2, board_width) ]
+    board2D = [board[i:i + board_width] for i in range (0, board_width**2, board_width)]
 
     return board2D
 
@@ -116,6 +116,7 @@ def draw_hover_box(x, y):
 # main function
 def main():
     global screen, clock
+    global board_width, x_margin, y_margin
 
     # initialize
     pygame.init()
@@ -126,7 +127,7 @@ def main():
 
     #setting default difficulty to easy
     # figure out how to access difficulty parameter from game.py
-    diff = 1
+    diff = 3
 
     #changes board size based on difficulty
     if diff == 1:
@@ -143,7 +144,7 @@ def main():
     #generates random board
     board = generate_board()
     #all tiles start off unflipped
-    flipped = [[False] * board_width] * board_width #tracks flipped tiles
+    flipped = [[False]*board_width for _ in range(board_width)]
 
     #mouse tracking variables
     mouse_x = None
@@ -174,7 +175,7 @@ def main():
                 if mouse_clicked:
                     #flips tile and draws board
                     flipped[x][y] = True
-                    draw_tile(board, flipped, x, y)
+                    draw_tile(flipped, x, y)
                     
                     if board[x][y]: #selected tile is correct
                         if wincon(board, flipped):
@@ -184,9 +185,11 @@ def main():
                     else: #selected tile is wrong
                         pygame.time.wait(1500)
                         #flips over all tiles 
-                        flipped = [[False] * board_width] * board_width
-                        draw_tile(board, flipped, x, y)
+                        #game_lose_animation(board, flipped)
+                        flipped = [[False]*board_width for _ in range(board_width)]
+                        draw_board(flipped)
                         pygame.time.wait(1000)
+                        running = False
 
                 else:
                     draw_hover_box(x, y)
