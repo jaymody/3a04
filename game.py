@@ -47,7 +47,7 @@ def smooth_motion(t, b, c):
 class Game:
     minigames = [SimonSays, LadderClimb]
 
-    def __init__(self, screen, clock, font, w, h, fps, num_players):
+    def __init__(self, screen, clock, font, w, h, fps, num_players, player_icons):
         """Game instance of Super Snakes and Ladders
 
         Parameters
@@ -75,6 +75,7 @@ class Game:
         self.font = font
         self.w, self.h = w, h
         self.fps = fps
+        self.player_icons = player_icons
 
         # generate pygame.Rect's for the board squares
         s = h // 12
@@ -128,7 +129,7 @@ class Game:
             self.draw_board()
             self.draw_players(False)
             self.screen.blit(
-                self.font.render(str(self.p + 1), True, black),
+                self.player_icons[self.p],
                 pos,
             )
             pygame.display.update()
@@ -268,7 +269,7 @@ class Game:
             if not draw_current_player and p == self.p:
                 continue
             self.screen.blit(
-                self.font.render(str(p + 1), True, black),
+                self.player_icons[p],
                 self.squares[player].center,
             )
 
