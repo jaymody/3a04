@@ -37,15 +37,15 @@ class LadderClimb:
         self.elapsed = 0
         if self.difficulty == "easy":
             self.prob = 1.2
-            self.speed = 8
+            self.speed = 7
             self.time_to_beat = 20
         elif self.difficulty == "medium":
             self.prob = 1.4
-            self.speed = 10
+            self.speed = 9
             self.time_to_beat = 30
         elif self.difficulty == "hard":
             self.prob = 1.6
-            self.speed = 12
+            self.speed = 10
             self.time_to_beat = 40
 
     @property
@@ -146,6 +146,6 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
 
     # start game
-    minigame = LadderClimb("easy", screen, clock, font, width, height, fps)
+    minigame = LadderClimb("hard", screen, clock, font, width, height, fps)
     result = minigame.play_minigame()
     print(f"\n\nGame Result: {result}")
