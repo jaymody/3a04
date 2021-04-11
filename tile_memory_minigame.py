@@ -3,7 +3,7 @@ import pygame # pylint: disable=import-error
 import random
 #from itertools import product
 #from pygame.locals import *
-# from pygame.color import COlor
+# from pygame.color import Color
 
 # CONSTANTS
 SCREEN_WIDTH = 800
@@ -22,7 +22,19 @@ BOARD_WIFTH_3 = 6
 # MARGIN_3 = 
 
 
-# MAIN FUNCTION
+# setting up board
+def generate_board(board_width):
+    """ Generates random board given board width """
+    
+    tiles = board_width**2
+    board = []
+    board.append([True]*(tiles/2)) #tiles to memorize (half the tiles on each board size need to be memorized)
+    board.append([False]*(tiles - tiles/2)) #blank tiles
+    random.shuffle(board) #randomizes tile placement
+
+    return board
+
+# main function
 def main():
     global screen, clock
 
@@ -30,8 +42,23 @@ def main():
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_WIDTH))
     pygame.display.set_caption("Tile Memory Minigame")
+    clock = pygame.time.Clock()
 
-    
+    #setting default difficulty to easy
+    # figure out how to access difficulty parameter from game.py
+    diff = 1
 
+    #changes board size based on difficulty
+    if diff == 1:
+        board_width = BOARD_WIDTH_1
+    elif diff == 2:
+        board_width = BOARD_WIDTH_2
+    else #diff == 3:
+        board_width = BOARD_WIFTH_3
+
+    board = generate_board()
+    flipped = [[False] * board_width for i in range(board_width)]
+
+#
 if __name__ == "__main__":
     main()
