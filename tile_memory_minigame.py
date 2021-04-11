@@ -22,6 +22,11 @@ BOARD_WIFTH_3 = 6
 # MARGIN_3 = 
 
 
+
+def game_start_animation(board):
+    """Lets player read minigame prompt, then flips tiles for 3 seconds and flips them back"""
+    
+
 # setting up board
 def generate_board(board_width):
     """ Generates random board given board width """
@@ -33,6 +38,28 @@ def generate_board(board_width):
     random.shuffle(board) #randomizes tile placement
 
     return board
+
+def draw_square(board, flipped, x, y):
+
+
+
+def draw_board(board, flipped):
+
+
+
+def draw_hover_box(x, y):
+
+
+
+def get_coords(x, y):
+
+
+
+def get_pos(cx, cy):
+
+
+
+
 
 # main function
 def main():
@@ -56,9 +83,13 @@ def main():
     else #diff == 3:
         board_width = BOARD_WIFTH_3
 
-    board = generate_board()
+    board = generate_board(board_width)
     flipped = [[False] * board_width for i in range(board_width)]
 
-#
+    mouse_x = None
+    mouse_y = None
+    mouse_clicked = False
+
+
 if __name__ == "__main__":
     main()
