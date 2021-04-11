@@ -1,3 +1,4 @@
+#Imports n stuff
 import sys
 import pygame
 import time
@@ -14,7 +15,10 @@ class SnakeGame:
         self.h = h
         self.fps = fps
 
+        #Snake head size
         self.snake_block = 40
+
+        #Different speeds for different difficulties
         if difficulty == 'easy':
             self.snake_speed = 15
         elif difficulty == 'medium':
@@ -22,7 +26,7 @@ class SnakeGame:
         else:
             self.snake_speed = 21
 
-
+    #Displays amount of food needed to win the game
     def Your_score(self, score):
         value = score_font.render("Food needed to win: " + str(score), True, font_green)
         dis.blit(value, [0, 0])
@@ -35,7 +39,7 @@ class SnakeGame:
 
     def message(self, msg, color):
         mesg = font_style.render(msg, True, color)
-        dis.blit(mesg, [self.w / 6, self.h / 3])
+        dis.blit(mesg, [self.w / 2, self.h / 3])
 
 
     def play_minigame(self):
@@ -69,24 +73,19 @@ class SnakeGame:
             
             if food_to_win == 0:
                 dis.fill(bg_green)
-                self.message("You win!", red)
+                self.message("You win!", white)
                 self.Your_score(food_to_win)
-                pygame.time.wait(1500)
                 pygame.display.update()
+                pygame.time.wait(1500)
                 return True
 
             while game_close == True:
                 dis.fill(bg_green)
-                self.message("You Lost! Press C-Play Again or Q-Quit", red)
+                self.message("You Lost!", red)
                 self.Your_score(food_to_win)
                 pygame.display.update()
-
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_q:
-                            return False
-                        if event.key == pygame.K_c:
-                            self.play_minigame()
+                pygame.time.wait(1500)
+                return False
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -145,6 +144,7 @@ class SnakeGame:
             clock.tick(self.snake_speed)
         return True
 
+#Colour constants
 snake_green = (0, 51, 0)
 white = (255, 255, 255)
 font_green = (51, 90, 45)
@@ -152,7 +152,7 @@ black = (0, 0, 0)
 red = (213, 50, 80)
 green = (0, 255, 0)
 bg_green = (90, 138, 83)
- 
+
 dis = pygame.display.set_mode((1280, 720))
 
  
