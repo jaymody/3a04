@@ -73,14 +73,11 @@ def main():
     )
     settings_menu.add.button("Back", pygame_menu.events.RESET)
 
-    # constants
-    fps = fps_selector.get_value()[0][1]
-
     # main menu
     menu = pygame_menu.Menu("Super Snakes and Ladders", width, height, theme=theme)
     menu.add.button(
         "Play",
-        lambda: Game(screen, clock, font, w=width, h=height, fps=fps, num_players=2, player_icons=[p1_icon_selector.get_value()[0][1], p2_icon_selector.get_value()[0][1]]),
+        lambda: Game(screen, clock, font, w=width, h=height, fps=fps_selector.get_value()[0][1], num_players=2, player_icons=[p1_icon_selector.get_value()[0][1], p2_icon_selector.get_value()[0][1]]),
     )
     menu.add.button("Help", help_menu)
     menu.add.button("Settings", settings_menu)
