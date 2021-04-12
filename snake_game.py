@@ -81,7 +81,7 @@ class SnakeGame:
 
             while game_close == True:
                 dis.fill(bg_green)
-                self.message("You Lost!", red)
+                self.message("You Lose!", red)
                 self.Your_score(food_to_win)
                 pygame.display.update()
                 pygame.time.wait(1500)
@@ -176,6 +176,6 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
 
     # start game
-    minigame = SnakeGame("easy", screen, clock, font_style, width, height, fps)
+    minigame = SnakeGame("medium", screen, clock, font_style, width, height, fps)
     result = minigame.play_minigame()
     print(f"\n\nGame Result: {result}")
