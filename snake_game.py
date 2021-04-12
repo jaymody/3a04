@@ -162,7 +162,7 @@ if __name__ == "__main__":
     # constants
     width = 1280
     height = 720
-    fps = 60
+    fps = 144
 
     # initialize
     pygame.init()
@@ -176,6 +176,6 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
 
     # start game
-    minigame = SnakeGame("medium", screen, clock, font_style, width, height, fps)
+    minigame = SnakeGame("hard", screen, clock, font_style, width, height, fps)
     result = minigame.play_minigame()
     print(f"\n\nGame Result: {result}")
