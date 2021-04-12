@@ -69,6 +69,8 @@ class SnakeGame:
         dis.fill(bg_green)
         self.Your_score(food_to_win)
         self.message("Use the arrow keys to move and collect food!", font_green)
+        pygame.display.update()
+        pygame.time.wait(3000)
         while not game_over:
             
             if food_to_win == 0:
