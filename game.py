@@ -2,7 +2,8 @@ import sys
 import random
 
 import pygame
-from pygame import Rect, Surface
+from pygame import Rect
+from random import randint
 
 from simon_says import SimonSays
 from ladder_climb import LadderClimb
@@ -47,7 +48,7 @@ def smooth_motion(t, b, c):
 class Game:
     minigames = [SimonSays, LadderClimb]
 
-    def __init__(self, screen, clock, font, w, h, fps, num_players, player_icons):
+    def __init__(self, screen, clock, font, w, h, fps, num_players, player_icons, board):
         """Game instance of Super Snakes and Ladders
 
         Parameters
@@ -69,13 +70,17 @@ class Game:
         """
         assert 2 <= num_players <= 4
 
-        self.board = Board()
+        self.board = board
         self.screen = screen
         self.clock = clock
         self.font = font
         self.w, self.h = w, h
         self.fps = fps
         self.player_icons = player_icons
+        
+        # assign color to player icons
+        for i in range(len(self.player_icons)):
+            self.player_icons[i] = self.colorize(self.player_icons[i], (randint(0, 255), randint(0, 255), randint(0, 255)))
 
         # generate pygame.Rect's for the board squares
         s = h // 12
@@ -106,6 +111,23 @@ class Game:
     def pos(self):
         """Current player's position"""
         return self.players[self.p]
+    
+    def colorize(self, image, newColor):
+        """
+        Create a "colorized" copy of a surface (replaces RGB values with the given color, preserving the per-pixel alphas of
+        original).
+        :param image: Surface to create a colorized copy of
+        :param newColor: RGB color to use (original alpha values are preserved)
+        :return: New colorized Surface instance
+        """
+        image = image.copy()
+
+        # zero out RGB values
+        image.fill((0, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
+        # add in new RGB values
+        image.fill(newColor[0:3] + (0,), None, pygame.BLEND_RGBA_ADD)
+
+        return image
 
     def animate(self, v1, v2, seconds=0.3):
         """Animate the current player moving from point v1 to point v2
