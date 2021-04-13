@@ -15,6 +15,9 @@ class SnakeGame:
         self.h = h
         self.fps = fps
 
+        self.font_style = pygame.font.SysFont("bahnschrift", 25)
+        self.score_font = pygame.font.SysFont("comicsansms", 35)
+
         #Snake head size
         self.snake_block = 40
 
@@ -28,7 +31,7 @@ class SnakeGame:
 
     #Displays amount of food needed to win the game
     def Your_score(self, score):
-        value = score_font.render("Food needed to win: " + str(score), True, font_green)
+        value = self.score_font.render("Food needed to win: " + str(score), True, font_green)
         dis.blit(value, [0, 0])
 
 
@@ -38,7 +41,7 @@ class SnakeGame:
             pygame.draw.rect(dis, snake_green, [x[0], x[1], snake_block, snake_block])
 
     def message(self, msg, color):
-        mesg = font_style.render(msg, True, color)
+        mesg = self.font_style.render(msg, True, color)
         dis.blit(mesg, [self.w / 2, self.h / 3])
 
 
@@ -58,7 +61,7 @@ class SnakeGame:
             food_to_win = 7
         else:
             food_to_win = 6
-        
+
         curr_dir = 5
         snake_List = []
         Length_of_snake = 1
@@ -72,7 +75,7 @@ class SnakeGame:
         pygame.display.update()
         pygame.time.wait(3000)
         while not game_over:
-            
+
             if food_to_win == 0:
                 dis.fill(bg_green)
                 self.message("You win!", white)
@@ -157,9 +160,9 @@ bg_green = (90, 138, 83)
 
 dis = pygame.display.set_mode((1280, 720))
 
- 
+
 clock = pygame.time.Clock()
- 
+
 if __name__ == "__main__":
     # constants
     width = 1280
@@ -169,8 +172,6 @@ if __name__ == "__main__":
     # initialize
     pygame.init()
     pygame.font.init()
-    font_style = pygame.font.SysFont("bahnschrift", 25)
-    score_font = pygame.font.SysFont("comicsansms", 35)
 
     pygame.display.set_caption('Snake Game')
 
@@ -178,6 +179,6 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
 
     # start game
-    minigame = SnakeGame("hard", screen, clock, font_style, width, height, fps)
+    minigame = SnakeGame("hard", screen, clock, None, width, height, fps)
     result = minigame.play_minigame()
     print(f"\n\nGame Result: {result}")
