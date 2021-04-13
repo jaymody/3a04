@@ -11,6 +11,18 @@ from snake_charmer import TypingGame
 from snake_game import SnakeGame
 from tile_memory import TileMemory
 
+
+# color scheme
+# from game import rich_black, red_crayola, princeton_orange, azure, mantis, emerald
+rich_black = (1, 22, 39)
+red_crayola = (239, 45, 86)
+princeton_orange = (237, 125, 58)
+azure = (230, 250, 252)
+mantis = (140, 216, 103)
+emerald = (47, 191, 113)
+
+
+# fundamental colors
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
@@ -235,29 +247,29 @@ class Game:
         self.prompt determines the text to be drawn for the prompt.
         """
         # draw background (draws over everything, acts as a screen clear)
-        self.screen.fill(white)
+        self.screen.fill(azure)
 
         # draw the button
-        pygame.draw.rect(self.screen, blue, self.button_roll)
+        pygame.draw.rect(self.screen, red_crayola, self.button_roll)
         self.screen.blit(
-            self.font.render(button_text, True, white), self.button_roll.center
+            self.font.render(button_text, True, azure), self.button_roll.center
         )
 
         # draw the prompt
         self.screen.blit(
-            self.font.render(self.prompt, True, black), self.box_prompt.topleft
+            self.font.render(self.prompt, True, rich_black), self.box_prompt.topleft
         )
 
         # draw the squares
         for i, sq in enumerate(self.squares):
-            pygame.draw.rect(self.screen, black, sq, width=3)
-            self.screen.blit(self.font.render(str(i + 1), True, black), sq.topleft)
+            pygame.draw.rect(self.screen, rich_black, sq, width=3)
+            self.screen.blit(self.font.render(str(i + 1), True, rich_black), sq.topleft)
 
         # draw the snakes
         for start, end in self.board.snakes.items():
             pygame.draw.line(
                 self.screen,
-                green,
+                emerald,
                 self.squares[start].center,
                 self.squares[end].center,
                 width=4,
@@ -267,7 +279,7 @@ class Game:
         for start, end in self.board.ladders.items():
             pygame.draw.line(
                 self.screen,
-                red,
+                princeton_orange,
                 self.squares[start].center,
                 self.squares[end].center,
                 width=4,
@@ -277,7 +289,7 @@ class Game:
         for pos in self.board.special:
             pygame.draw.circle(
                 self.screen,
-                blue,
+                red_crayola,
                 self.squares[pos].center,
                 radius=4,
             )
