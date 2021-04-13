@@ -68,10 +68,10 @@ class SimonSays:
         self.fps = fps
 
         background_image = pygame.image.load(os.path.join("images", "BACKGROUND.jpeg"))
-        self.backgroundResize = pygame.transform.scale(background_image, (850, 550))
+        self.backgroundResize = pygame.transform.scale(background_image, (1280, 720))
 
         game_image = pygame.image.load(os.path.join("images", "GAMEBACK.jpeg"))
-        self.gameImageResize = pygame.transform.scale(game_image, (850, 550))
+        self.gameImageResize = pygame.transform.scale(game_image, (1280, 720))
 
         self.font = pygame.font.SysFont("comicsans", 25)
 
@@ -199,7 +199,7 @@ class SimonSays:
             225,
             250,
             100,
-            "Play game",
+            "Play game :D !",
         )
         playbutton.draw((0, 0, 0))
         pygame.display.update()
