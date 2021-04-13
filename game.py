@@ -7,6 +7,9 @@ from random import randint
 
 from simon_says import SimonSays
 from ladder_climb import LadderClimb
+from snake_charmer import TypingGame
+from snake_game import SnakeGame
+from tile_memory import TileMemory
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -46,7 +49,7 @@ def smooth_motion(t, b, c):
 
 
 class Game:
-    minigames = [SimonSays, LadderClimb]
+    minigames = [SimonSays, LadderClimb, TypingGame, SnakeGame, TileMemory]
 
     def __init__(self, screen, clock, font, w, h, fps, num_players, player_icons, board):
         """Game instance of Super Snakes and Ladders
@@ -77,7 +80,7 @@ class Game:
         self.w, self.h = w, h
         self.fps = fps
         self.player_icons = player_icons
-        
+
         # assign color to player icons
         for i in range(len(self.player_icons)):
             self.player_icons[i] = self.colorize(self.player_icons[i], (randint(0, 255), randint(0, 255), randint(0, 255)))
@@ -111,7 +114,7 @@ class Game:
     def pos(self):
         """Current player's position"""
         return self.players[self.p]
-    
+
     def colorize(self, image, newColor):
         """
         Create a "colorized" copy of a surface (replaces RGB values with the given color, preserving the per-pixel alphas of
