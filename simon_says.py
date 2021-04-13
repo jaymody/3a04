@@ -139,7 +139,7 @@ class SimonSays:
         # show tiles
         pygame.display.update()
         pygame.time.wait(3000)
-
+        
         # grey out 3 tiles
         grey_rects = random.sample(self.rects, self.num_squares_to_click)
         for rect in grey_rects:
