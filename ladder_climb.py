@@ -155,7 +155,6 @@ class LadderClimb:
 
     def draw(self):
         # clear screen and draw background
-        # self.screen.fill(white)
         self.screen.fill(sky_blue)
 
         # draw ladders
@@ -201,6 +200,13 @@ class LadderClimb:
         start = time.time()
         while True:
             if self.tick_event():
+                pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 400, 100))
+                self.screen.blit(
+                    self.font.render("YOU LOST!", True, white),
+                    (20, 40),
+                )
+                pygame.display.update()
+                pygame.time.wait(1500)
                 return False
 
             for event in pygame.event.get():
@@ -208,6 +214,13 @@ class LadderClimb:
 
             self.elapsed = time.time() - start
             if self.elapsed > self.time_to_beat:
+                pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 400, 100))
+                self.screen.blit(
+                    self.font.render("YOU WON!", True, white),
+                    (20, 40),
+                )
+                pygame.display.update()
+                pygame.time.wait(1500)
                 return True
 
             self.clouds.update()
