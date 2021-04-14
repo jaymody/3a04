@@ -70,7 +70,7 @@ def smooth_motion(t, b, c):
 
 
 class Game:
-    minigames = [TileMemory]
+    minigames = [SimonSays, LadderClimb, SnakeCharmer, SnakeGame, TileMemory]
 
     def __init__(
         self, screen, clock, font, w, h, fps, num_players, player_icons, board
