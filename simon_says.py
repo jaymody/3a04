@@ -73,7 +73,7 @@ class SimonSays:
         self.w, self.h = w, h
         self.fps = fps
 
-        background_image = pygame.image.load(os.path.join("images", "BACKGROUND.jpeg"))
+        background_image = pygame.image.load(os.path.join("images", "GAMEBACK.jpeg"))
         self.backgroundResize = pygame.transform.scale(background_image, (1280, 720))
 
         game_image = pygame.image.load(os.path.join("images", "GAMEBACK.jpeg"))
@@ -181,7 +181,7 @@ class SimonSays:
                                 if cur_square >= len(grey_rects):
                                     return True
                             else:
-                                pygame.draw.rect(self.screen, red, rect)
+                                pygame.draw.rect(self.screen, emerald, rect)
                                 pygame.display.update()
                                 pygame.time.wait(500)
                                 return False
