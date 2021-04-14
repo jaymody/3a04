@@ -150,7 +150,7 @@ class SimonSays:
         grey_rects = random.sample(self.rects, self.num_squares_to_click)
         for rect in grey_rects:
             # draw grey rect
-            pygame.draw.rect(self.screen, black, rect)
+            pygame.draw.rect(self.screen, emerald, rect)
             pygame.display.update()
             pygame.time.wait(self.time_to_see_square)
 
@@ -181,7 +181,7 @@ class SimonSays:
                                 if cur_square >= len(grey_rects):
                                     return True
                             else:
-                                pygame.draw.rect(self.screen, emerald, rect)
+                                pygame.draw.rect(self.screen, rich_black, rect)
                                 pygame.display.update()
                                 pygame.time.wait(500)
                                 return False
