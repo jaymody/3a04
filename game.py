@@ -430,6 +430,8 @@ class Game:
             game_won = self.play_turn()
             if game_won:
                 print(f"P{self.turn} WON")
+                self.draw_board("P{self.turn} WON THE GAME!!!")
+                pygame.time.wait(2000)
                 return
             self.turn = (self.turn + 1) % len(self.players)
 
