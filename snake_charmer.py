@@ -247,8 +247,8 @@ class TypingGame:
             while not self.start_game:
                 self.clock.tick(self.fps)
                 self.screen.fill(DARK_BLUE)
-                draw_text("Welcome to Snake Charmer! Can you charm the snake before it runs away?", font, OFFWHITE, self.screen, self.width/2, self.height/2 - 10)
-                draw_text("Press any button to get started", font, OFFWHITE, self.screen, self.width/2, self.height/2 + 10)
+                draw_text("Welcome to Snake Charmer! Can you charm the snake before it runs away?", self.font, OFFWHITE, self.screen, self.width/2, self.height/2 - 10)
+                draw_text("Press any button to get started", self.font, OFFWHITE, self.screen, self.width/2, self.height/2 + 10)
                 for event in pygame.event.get():
                     if event.type == KEYDOWN:
                         self.start_game = True
@@ -269,7 +269,7 @@ class TypingGame:
                 self.clock.tick(self.fps)
                 self.screen.fill(DARK_BLUE)
                 elapsed_time = end_tick - start_tick
-                draw_text("Time Left: " + str(round(self.total_time - elapsed_time, 3)), font, OFFWHITE, self.screen, self.width/12, self.height/20, False)
+                draw_text("Time Left: " + str(round(self.total_time - elapsed_time, 3)), self.font, OFFWHITE, self.screen, self.width/12, self.height/20, False)
                 end_tick = pygame.time.get_ticks() / 1000
 
                 if (elapsed_time > self.total_time):
@@ -289,15 +289,15 @@ class TypingGame:
                     self.spawned_words[i] = (word[0], word[1], self.get_colour(len(word[0]), elapsed_time - word[1]))
                     word_pos = self.calc_word_pos(i)
                     if (word[0] != ""):
-                        draw_text(word[0], font, word[2], self.screen, word_pos[0], word_pos[1] - 20)
-                        draw_text(str(len(word[0]) * self.diff.damage_multi()), font, OFFWHITE, self.screen, word_pos[0], word_pos[1] + 20)
+                        draw_text(word[0], self.font, word[2], self.screen, word_pos[0], word_pos[1] - 20)
+                        draw_text(str(len(word[0]) * self.diff.damage_multi()), self.font, OFFWHITE, self.screen, word_pos[0], word_pos[1] + 20)
 
                  # draws background of where user types
                 typed_bg = pygame.Rect(self.width, self.height, 250, 45)
                 typed_bg.center = (self.width/2, self.height/2)
                 pygame.draw.rect(self.screen, OFFWHITE, typed_bg)
                 # draws users text
-                draw_text(self.typed_word, font, DARK_BLUE, self.screen, self.width/2, self.height/2)
+                draw_text(self.typed_word, self.font, DARK_BLUE, self.screen, self.width/2, self.height/2)
 
                 # despawns any expired words
                 self.despawn_word(elapsed_time)
@@ -338,7 +338,7 @@ class TypingGame:
             self.screen.fill(DARK_BLUE)
             self.snake.sprite.change_snake(self.win)
             self.snake.draw(screen)
-            draw_text("You win!" if self.win else "You lose!", font, OFFWHITE, self.screen, self.width/2, self.height/2 - 10)
+            draw_text("You win!" if self.win else "You lose!", self.font, OFFWHITE, self.screen, self.width/2, self.height/2 - 10)
             pygame.display.update()
             pygame.time.wait(1500)
             return self.win
