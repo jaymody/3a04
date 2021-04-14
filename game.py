@@ -30,6 +30,15 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 
 
+def draw_text(text, font, color, screen, x, y, center=True):
+    textobj = font.render(text, 1, color)
+    textrect = textobj.get_rect()
+    if center:
+        textrect.center = (x, y)
+    else:
+        textrect.topleft = (x, y)
+    screen.blit(textobj, textrect)
+
 def smooth_motion(t, b, c):
     """Computes points along a 1D line for a smooth accelerated/decelerated motion.
 
@@ -96,10 +105,11 @@ class Game:
         self.player_icons = player_icons
 
         # assign color to player icons
+        icon_colors = [red, green, blue, white]
         for i in range(len(self.player_icons)):
             self.player_icons[i] = self.colorize(
                 self.player_icons[i],
-                (randint(0, 255), randint(0, 255), randint(0, 255)),
+                icon_colors[i],
             )
 
         # generate pygame.Rect's for the board squares
@@ -108,8 +118,8 @@ class Game:
         self.squares = [Rect(s + c * s, h - 2 * s - r * s, s, s) for r, c in coords]
 
         # button/prompt
-        self.button_roll = Rect(s * 12, s * 1, s * 4, s)
-        self.box_prompt = Rect(s * 12, s * 3, s * 4, s * 4)
+        self.button_roll = Rect(s * 14, s * 5, s * 4, s * 4)
+        self.box_prompt = Rect(self.w // 2 - 2*s, 10, s * 4, s)
         self.prompt = ""
 
         # players[a] = b, such that a is the player number and b is
@@ -203,7 +213,7 @@ class Game:
     def snake(self):
         """Make the current player go down the snake"""
         self.prompt = f"P{self.p + 1} landed on a snake! Play a minigame."
-        self.draw_board("Play Minigame")
+        self.draw_board("Start Minigame")
         self.draw_players()
         pygame.display.update()
         self.wait_for_click()
@@ -256,20 +266,17 @@ class Game:
 
         # draw the button
         pygame.draw.rect(self.screen, red_crayola, self.button_roll)
-        self.screen.blit(
-            self.font.render(button_text, True, azure), self.button_roll.center
-        )
+        draw_text(button_text, self.font, azure, self.screen, *self.button_roll.center)
 
         # draw the prompt
-        self.screen.blit(
-            self.font.render(self.prompt, True, rich_black), self.box_prompt.topleft
-        )
+        draw_text(self.prompt, self.font, rich_black, self.screen, *self.box_prompt.center)
 
         # draw the squares
         for i, sq in enumerate(self.squares):
-            pygame.draw.rect(self.screen, rich_black, sq, width=3)
+            pygame.draw.rect(self.screen, rich_black, sq)
+            pygame.draw.rect(self.screen, white, sq, width=2)
             self.screen.blit(
-                self.font.render(str(i + 1), True, rich_black),
+                self.font.render(str(i + 1), True, white),
                 (sq.left + 5, sq.top + 5),
             )
 

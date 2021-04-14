@@ -34,7 +34,7 @@ def main():
     # initialize
     pygame.init()
     pygame.font.init()
-    font = pygame.font.SysFont("comicsans", 20)
+    font = pygame.font.SysFont("comicsans", 28)
     screen = pygame.display.set_mode([width, height])
     pygame.display.set_caption("Super Snakes and Ladders")
     clock = pygame.time.Clock()
@@ -71,7 +71,7 @@ def main():
     fps_selector = settings_menu.add.selector(
         title='FPS:',
         items=fps_pool,
-        default=2,
+        default=1,
         style=pygame_menu.widgets.SELECTOR_STYLE_FANCY
     )
     settings_menu.add.button("Back", pygame_menu.events.RESET)
