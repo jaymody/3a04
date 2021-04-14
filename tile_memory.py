@@ -14,14 +14,8 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 
 # CONSTANTS
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
 TILE_SIZE = 50
 TILE_GAP = 10
-FPS = 60
-BOARD_WIDTH_1 = 3
-BOARD_WIDTH_2 = 4
-BOARD_WIFTH_3 = 5
 BG_COLOR = Color('black')
 
 class TileMemory:
@@ -35,15 +29,15 @@ class TileMemory:
 
         #changes board size based on difficulty
         if self.difficulty == "easy":
-            self.board_width = BOARD_WIDTH_1
+            self.board_width = 3
         elif self.difficulty == "medium":
-            self.board_width = BOARD_WIDTH_2
+            self.board_width = 4
         else: #self.difficulty == "hard"
-            self.board_width = BOARD_WIFTH_3
+            self.board_width = 5
 
         #margins for mouse tracking calculations
-        self.x_margin = (SCREEN_WIDTH - (self.board_width * (TILE_SIZE + TILE_GAP))) // 2
-        self.y_margin = (SCREEN_HEIGHT - (self.board_width * (TILE_SIZE + TILE_GAP))) // 2 
+        self.x_margin = (self.w - (self.board_width * (TILE_SIZE + TILE_GAP))) // 2
+        self.y_margin = (self.h - (self.board_width * (TILE_SIZE + TILE_GAP))) // 2 
 
     def wincon(self, board, flipped):
         """ Win condition: player has flipped all the correct tiles """
@@ -55,6 +49,9 @@ class TileMemory:
             Flips back tiles """
         
         # all tiles to be memorized are flipped
+
+        self.screen.fill(BG_COLOR)
+
         empty = [[False]*self.board_width for _ in range(self.board_width)]
         self.draw_board(empty)
         pygame.time.wait(3000)
@@ -113,11 +110,11 @@ class TileMemory:
 
         coords = self.get_coord(x, y)
         square_rect = (*coords, TILE_SIZE, TILE_SIZE)
-        pygame.draw.rect(screen, BG_COLOR, square_rect)
+        pygame.draw.rect(self.screen, BG_COLOR, square_rect)
         if flipped[x][y]:
-            pygame.draw.rect(screen, Color('blue'), square_rect)
+            pygame.draw.rect(self.screen, Color('blue'), square_rect)
         else:
-            pygame.draw.rect(screen, Color('grey'), square_rect)
+            pygame.draw.rect(self.screen, Color('grey'), square_rect)
 
         if update:
             pygame.display.update(square_rect)
@@ -134,14 +131,14 @@ class TileMemory:
         """ Draws the highlight box around the square """
 
         px, py = self.get_coord(x, y)
-        pygame.draw.rect(screen, Color('red'), (px - 5, py - 5, TILE_SIZE + 10, TILE_SIZE + 10), 5)
+        pygame.draw.rect(self.screen, Color('red'), (px - 5, py - 5, TILE_SIZE + 10, TILE_SIZE + 10), 5)
     
     def play_minigame(self):
         """ Returns True if minigame is won, False if lost """
 
         #initialize margins
-        self.x_margin = (SCREEN_WIDTH - (self.board_width * (TILE_SIZE + TILE_GAP))) // 2
-        self.y_margin = (SCREEN_HEIGHT - (self.board_width * (TILE_SIZE + TILE_GAP))) // 2
+        self.x_margin = (self.w - (self.board_width * (TILE_SIZE + TILE_GAP))) // 2
+        self.y_margin = (self.h - (self.board_width * (TILE_SIZE + TILE_GAP))) // 2
 
         #generates random board
         board = self.generate_board()
@@ -158,7 +155,7 @@ class TileMemory:
         self.game_start_animation(board)
 
         while running:
-            screen.fill(BG_COLOR)
+            self.screen.fill(BG_COLOR)
             self.draw_board(flipped)
 
             for event in pygame.event.get():
@@ -208,15 +205,15 @@ class TileMemory:
 
 if __name__ == "__main__":
     # constants
-    width = SCREEN_WIDTH
-    height = SCREEN_HEIGHT
-    fps = FPS
+    width = 1280
+    height = 720
+    fps = 60
 
     # initialize
     pygame.init()
     pygame.font.init()
     font = pygame.font.SysFont("timesnewroman", 20)
-    screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+    screen = pygame.display.set_mode([width, height])
     pygame.display.set_caption("Tile Memory Minigame")
     clock = pygame.time.Clock()
 
