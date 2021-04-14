@@ -70,7 +70,7 @@ def smooth_motion(t, b, c):
 
 
 class Game:
-    minigames = [SimonSays, LadderClimb, SnakeCharmer, SnakeGame, TileMemory]
+    minigames = [SimonSays, LadderClimb, SnakeCharmer, TileMemory, SnakeGame]
 
     def __init__(
         self, screen, clock, font, w, h, fps, num_players, player_icons, board
@@ -95,6 +95,8 @@ class Game:
             Number of players (2 <= num_players <= 4)
         """
         assert 2 <= num_players <= 4
+
+        self.mini_count = 0
 
         self.board = board
         self.screen = screen
@@ -352,7 +354,9 @@ class Game:
         else:
             difficulty = "hard"
 
-        minigame_class = random.choice(self.minigames)
+        # minigame_class = random.choice(self.minigames)
+        minigame_class = self.minigames[self.mini_count]
+        self.mini_count = (self.mini_count + 1) % len(self.minigames)
         minigame = minigame_class(
             difficulty, self.screen, self.clock, self.font, self.w, self.h, self.fps
         )
