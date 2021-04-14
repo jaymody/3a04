@@ -7,7 +7,7 @@ from random import randint
 
 from simon_says import SimonSays
 from ladder_climb import LadderClimb
-from snake_charmer import TypingGame
+from snake_charmer import SnakeCharmer
 from snake_game import SnakeGame
 from tile_memory import TileMemory
 
@@ -61,7 +61,7 @@ def smooth_motion(t, b, c):
 
 
 class Game:
-    minigames = [SimonSays, LadderClimb, TypingGame, SnakeGame, TileMemory]
+    minigames = [SimonSays, LadderClimb, SnakeCharmer, SnakeGame, TileMemory]
 
     def __init__(self, screen, clock, font, w, h, fps, num_players, player_icons, board):
         """Game instance of Super Snakes and Ladders
