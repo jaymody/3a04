@@ -174,7 +174,7 @@ class LadderClimb:
 
 
         # textbox description
-        pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 400, 100))
+        pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 500, 100))
 
         # draw timer
         self.screen.blit(
@@ -200,7 +200,7 @@ class LadderClimb:
         start = time.time()
         while True:
             if self.tick_event():
-                pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 400, 100))
+                pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 500, 100))
                 self.screen.blit(
                     self.font.render("YOU LOST!", True, white),
                     (20, 40),
@@ -214,7 +214,7 @@ class LadderClimb:
 
             self.elapsed = time.time() - start
             if self.elapsed > self.time_to_beat:
-                pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 400, 100))
+                pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 500, 100))
                 self.screen.blit(
                     self.font.render("YOU WON!", True, white),
                     (20, 40),
