@@ -70,7 +70,7 @@ def smooth_motion(t, b, c):
 
 
 class Game:
-    minigames = [SimonSays, LadderClimb, SnakeCharmer, SnakeGame, TileMemory]
+    minigames = [SimonSays, LadderClimb, SnakeCharmer, TileMemory, SnakeGame]
 
     def __init__(
         self, screen, clock, font, w, h, fps, num_players, player_icons, board
@@ -95,6 +95,8 @@ class Game:
             Number of players (2 <= num_players <= 4)
         """
         assert 2 <= num_players <= 4
+
+        self.mini_count = 0
 
         self.board = board
         self.screen = screen
@@ -124,7 +126,7 @@ class Game:
 
         # players[a] = b, such that a is the player number and b is
         # their position on the board
-        self.players = [0] * num_players
+        self.players = [98] * num_players
 
         # turn represents the current player who has their turn
         self.turn = 0
@@ -352,7 +354,9 @@ class Game:
         else:
             difficulty = "hard"
 
-        minigame_class = random.choice(self.minigames)
+        # minigame_class = random.choice(self.minigames)
+        minigame_class = self.minigames[self.mini_count]
+        self.mini_count = (self.mini_count + 1) % len(self.minigames)
         minigame = minigame_class(
             difficulty, self.screen, self.clock, self.font, self.w, self.h, self.fps
         )
@@ -429,8 +433,13 @@ class Game:
             # game logic
             game_won = self.play_turn()
             if game_won:
-                print(f"P{self.turn} WON")
-                self.draw_board("P{self.turn} WON THE GAME!!!")
+                print(f"P{self.turn + 1} WON")
+                # draw background (draws over everything, acts as a screen clear)
+                self.screen.fill(azure)
+                # draw the prompt
+                draw_text(f"P{self.turn + 1} WON", self.font, rich_black, self.screen, *self.box_prompt.center)
+
+                pygame.display.update()
                 pygame.time.wait(2000)
                 return
             self.turn = (self.turn + 1) % len(self.players)

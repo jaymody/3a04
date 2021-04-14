@@ -69,7 +69,7 @@ class Player(pygame.sprite.Sprite):
         self.pos = max(self.pos - 1, 0)
 
     def move_right(self):
-        self.pos = min(self.pos + 1, len(self.ladder_positions))
+        self.pos = min(self.pos + 1, len(self.ladder_positions) - 1)
 
     def update(self):
         self.rect.left = self.ladder_positions[self.pos] + 1
@@ -125,7 +125,9 @@ class LadderClimb:
         self.new_snake_allowed = True
 
     def tick_event(self):
-        new_allowed = True
+        elapsed = time.time() - self.start_time
+        new_allowed = elapsed > 3
+
         for i, snake in enumerate(self.snakes):
             if snake.rect.colliderect(self.player.rect):
                 return True
@@ -197,7 +199,8 @@ class LadderClimb:
         """Return True if minigame is won, else False"""
         self.draw()
         pygame.display.update()
-        start = time.time()
+        self.start_time = time.time()
+        start = self.start_time
         while True:
             if self.tick_event():
                 pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 500, 100))
