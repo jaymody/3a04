@@ -87,8 +87,8 @@ class Snake(pygame.sprite.Sprite):
         hp_rect  = pygame.Rect((self.width - self.health_bar_length)/2, self.height/20, self.current_health / self.health_ratio, 25)
         transition_bar_rect  = pygame.Rect(hp_rect.right - transition_width, self.height/20, transition_width, 25)
 
-        pygame.draw.rect(screen, RED, hp_rect)
-        pygame.draw.rect(screen, transition_colour, transition_bar_rect)
+        pygame.draw.rect(self.screen, RED, hp_rect)
+        pygame.draw.rect(self.screen, transition_colour, transition_bar_rect)
         pygame.draw.rect(self.screen, OFFWHITE, ((self.width - self.health_bar_length)/2, self.height/20, self.health_bar_length, 25), 3)
         draw_text("HP: " + str(self.current_health), self.font, OFFWHITE, self.screen, self.width/2, transition_bar_rect.centery)
 
@@ -216,7 +216,7 @@ class TypingGame:
         return (self.width/5*3, self.height/7*6)
 
     def draw_snake(self):
-        self.snake.draw(screen)
+        self.snake.draw(self.screen)
         self.snake.update()
     
     def user_submit(self):
@@ -337,7 +337,7 @@ class TypingGame:
                 self.win = True
             self.screen.fill(DARK_BLUE)
             self.snake.sprite.change_snake(self.win)
-            self.snake.draw(screen)
+            self.snake.draw(self.screen)
             draw_text("You win!" if self.win else "You lose!", self.font, OFFWHITE, self.screen, self.width/2, self.height/2 - 10)
             pygame.display.update()
             pygame.time.wait(1500)
