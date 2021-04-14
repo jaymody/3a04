@@ -108,16 +108,16 @@ class LadderClimb:
         self.elapsed = 0
         if self.difficulty == "easy":
             self.prob = 0.3
-            self.speed = 7
+            self.speed = int(4 * fps/60)
             self.time_to_beat = 20
         elif self.difficulty == "medium":
             self.prob = 0.35
-            self.speed = 8
-            self.time_to_beat = 30
+            self.speed = int(5 * fps/60)
+            self.time_to_beat = 25
         elif self.difficulty == "hard":
             self.prob = 0.4
-            self.speed = 9
-            self.time_to_beat = 40
+            self.speed = int(6 * fps/60)
+            self.time_to_beat = 30
 
         pygame.time.set_timer(self.NEW_CLOUD, 500)
         pygame.time.set_timer(self.NEW_SNAKE, 50)
