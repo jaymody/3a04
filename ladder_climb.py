@@ -4,20 +4,12 @@ import random
 import pygame
 from pygame.locals import RLEACCEL
 
-rich_black = (1, 22, 39)
-red_crayola = (239, 45, 86)
-princeton_orange = (237, 125, 58)
-azure = (230, 250, 252)
-mantis = (140, 216, 103)
-emerald = (47, 191, 113)
-
-
-# fundamental colors
-red = (255, 0, 0)
-green = (0, 255, 0)
-blue = (0, 0, 255)
+# constants
+rich_black = (26, 27, 41)
 white = (255, 255, 255)
-black = (0, 0, 0)
+orange = (237, 125, 58)
+sky_blue = (135, 206, 250)
+
 
 class Cloud(pygame.sprite.Sprite):
     def __init__(self, w, h, speed, size):
@@ -26,7 +18,7 @@ class Cloud(pygame.sprite.Sprite):
         ratio = size / surf.get_height()
         sw, sh = int(ratio*surf.get_width()), int(ratio*surf.get_height())
         self.surf = pygame.transform.scale(surf, (sw, sh))
-        self.surf.set_colorkey((135, 206, 250), RLEACCEL)
+        self.surf.set_colorkey(sky_blue, RLEACCEL)
 
         if random.random() < 0.5:
             xpos = random.randint(0, w//4)
@@ -52,7 +44,7 @@ class FallingSnake(pygame.sprite.Sprite):
 
         surf = pygame.image.load("assets/ladder_climb/falling_snake.png").convert_alpha()
         self.surf = pygame.transform.scale(surf, (size - 2, size))
-        self.surf.set_colorkey((135, 206, 250), RLEACCEL)
+        self.surf.set_colorkey(sky_blue, RLEACCEL)
 
         self.rect = self.surf.get_rect(topleft=(x + 1, -size))
 
@@ -67,7 +59,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         surf = pygame.image.load("assets/ladder_climb/player.png").convert_alpha()
         self.surf = pygame.transform.scale(surf, (size - 2, size))
-        self.surf.set_colorkey((135, 206, 250), RLEACCEL)
+        self.surf.set_colorkey(sky_blue, RLEACCEL)
 
         self.pos = 0
         self.ladder_positions = ladder_positions
@@ -163,18 +155,11 @@ class LadderClimb:
 
     def draw(self):
         # clear screen and draw background
-        # self.screen.fill(white)
-        self.screen.fill((135, 206, 250))
-
-        # draw timer
-        self.screen.blit(
-            self.font.render(str(int(self.time_to_beat - self.elapsed)), True, black),
-            (100, 100),
-        )
+        self.screen.fill(sky_blue)
 
         # draw ladders
         for rect in self.ladder_rects:
-            pygame.draw.rect(self.screen, black, rect, width=3)
+            pygame.draw.rect(self.screen, orange, rect, width=3)
 
         # draw clouds
         for cloud in self.clouds:
@@ -186,7 +171,27 @@ class LadderClimb:
 
         # draw player
         self.screen.blit(self.player.surf, self.player.rect)
-        # pygame.draw.rect(self.screen, blue, self.)
+
+
+        # textbox description
+        pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 400, 100))
+
+        # draw timer
+        self.screen.blit(
+            self.font.render("Timer: " + str(int(self.time_to_beat - self.elapsed)), True, white),
+            (20, 20),
+        )
+
+        # instructions
+        self.screen.blit(
+            self.font.render("Avoid the snakes", True, white),
+            (20, 40),
+        )
+
+        self.screen.blit(
+            self.font.render("Use the arrows keys to move left and right", True, white),
+            (20, 60)
+        )
 
     def play_minigame(self):
         """Return True if minigame is won, else False"""
@@ -195,6 +200,13 @@ class LadderClimb:
         start = time.time()
         while True:
             if self.tick_event():
+                pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 400, 100))
+                self.screen.blit(
+                    self.font.render("YOU LOST!", True, white),
+                    (20, 40),
+                )
+                pygame.display.update()
+                pygame.time.wait(1500)
                 return False
 
             for event in pygame.event.get():
@@ -202,6 +214,13 @@ class LadderClimb:
 
             self.elapsed = time.time() - start
             if self.elapsed > self.time_to_beat:
+                pygame.draw.rect(self.screen, rich_black, pygame.Rect(0, 0, 400, 100))
+                self.screen.blit(
+                    self.font.render("YOU WON!", True, white),
+                    (20, 40),
+                )
+                pygame.display.update()
+                pygame.time.wait(1500)
                 return True
 
             self.clouds.update()

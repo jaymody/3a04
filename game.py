@@ -61,9 +61,11 @@ def smooth_motion(t, b, c):
 
 
 class Game:
-    minigames = [SimonSays, LadderClimb, SnakeCharmer, SnakeGame, TileMemory]
+    minigames = [TileMemory]
 
-    def __init__(self, screen, clock, font, w, h, fps, num_players, player_icons, board):
+    def __init__(
+        self, screen, clock, font, w, h, fps, num_players, player_icons, board
+    ):
         """Game instance of Super Snakes and Ladders
 
         Parameters
@@ -95,7 +97,10 @@ class Game:
 
         # assign color to player icons
         for i in range(len(self.player_icons)):
-            self.player_icons[i] = self.colorize(self.player_icons[i], (randint(0, 255), randint(0, 255), randint(0, 255)))
+            self.player_icons[i] = self.colorize(
+                self.player_icons[i],
+                (randint(0, 255), randint(0, 255), randint(0, 255)),
+            )
 
         # generate pygame.Rect's for the board squares
         s = h // 12
@@ -144,7 +149,7 @@ class Game:
 
         return image
 
-    def animate(self, v1, v2, seconds=0.3):
+    def animate(self, v1, v2, seconds=0.2):
         """Animate the current player moving from point v1 to point v2
 
         Parameters
@@ -263,7 +268,10 @@ class Game:
         # draw the squares
         for i, sq in enumerate(self.squares):
             pygame.draw.rect(self.screen, rich_black, sq, width=3)
-            self.screen.blit(self.font.render(str(i + 1), True, rich_black), sq.topleft)
+            self.screen.blit(
+                self.font.render(str(i + 1), True, rich_black),
+                (sq.left + 5, sq.top + 5),
+            )
 
         # draw the snakes
         for start, end in self.board.snakes.items():
@@ -287,12 +295,7 @@ class Game:
 
         # draw the special squares
         for pos in self.board.special:
-            pygame.draw.circle(
-                self.screen,
-                red_crayola,
-                self.squares[pos].center,
-                radius=4,
-            )
+            pygame.draw.rect(self.screen, red_crayola, self.squares[pos], width=4)
 
     def draw_players(self, draw_current_player=True):
         """Draw the players on the board

@@ -38,7 +38,7 @@ class SnakeGame:
 
     def our_snake(self, snake_block, snake_list):
         for x in snake_list:
-            pygame.draw.rect(dis, snake_green, [x[0], x[1], snake_block, snake_block])
+            pygame.draw.rect(dis, mantis, [x[0], x[1], snake_block, snake_block])
 
     def message(self, msg, color):
         mesg = self.font_style.render(msg, True, color)
@@ -69,7 +69,7 @@ class SnakeGame:
         foodx = round(random.randrange(0, self.w - self.snake_block)/40.0) * 40.0
         foody = round(random.randrange(0, self.h - self.snake_block)/40.0) * 40.0
 
-        dis.fill(bg_green)
+        dis.fill(rich_black)
         self.Your_score(food_to_win)
         self.message("Use the arrow keys to move and collect food!", font_green)
         pygame.display.update()
@@ -77,7 +77,7 @@ class SnakeGame:
         while not game_over:
 
             if food_to_win == 0:
-                dis.fill(bg_green)
+                dis.fill(rich_black)
                 self.message("You win!", white)
                 self.Your_score(food_to_win)
                 pygame.display.update()
@@ -85,7 +85,7 @@ class SnakeGame:
                 return True
 
             while game_close == True:
-                dis.fill(bg_green)
+                dis.fill(rich_black)
                 self.message("You Lose!", red)
                 self.Your_score(food_to_win)
                 pygame.display.update()
@@ -117,8 +117,8 @@ class SnakeGame:
                 game_close = True
             x1 += x1_change
             y1 += y1_change
-            dis.fill(bg_green)
-            pygame.draw.rect(dis, green, [foodx, foody, self.snake_block, self.snake_block])
+            dis.fill(rich_black)
+            pygame.draw.rect(dis, princeton_orange, [foodx, foody, self.snake_block, self.snake_block])
             snake_Head = []
             snake_Head.append(x1)
             snake_Head.append(y1)
@@ -157,6 +157,13 @@ black = (0, 0, 0)
 red = (213, 50, 80)
 green = (0, 255, 0)
 bg_green = (90, 138, 83)
+
+rich_black = (1, 22, 39)
+red_crayola = (239, 45, 86)
+princeton_orange = (237, 125, 58)
+azure = (230, 250, 252)
+mantis = (140, 216, 103)
+emerald = (47, 191, 113)
 
 dis = pygame.display.set_mode((1280, 720))
 
