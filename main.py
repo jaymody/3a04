@@ -16,7 +16,7 @@ lock = pygame.image.load('./images/lock.png')
 plane = pygame.image.load('./images/plane.png')
 pin = pygame.image.load('./images/pin.png')
 smile = pygame.image.load('./images/smile.png')
-trash = pygame.image.load('./images/trash.png')    
+trash = pygame.image.load('./images/trash.png')
 
 def main():
     # TODO: game icon, themeing
@@ -34,7 +34,7 @@ def main():
     # initialize
     pygame.init()
     pygame.font.init()
-    font = pygame.font.SysFont("timesnewroman", 20)
+    font = pygame.font.SysFont("comicsans", 20)
     screen = pygame.display.set_mode([width, height])
     pygame.display.set_caption("Super Snakes and Ladders")
     clock = pygame.time.Clock()
@@ -71,7 +71,7 @@ def main():
     fps_selector = settings_menu.add.selector(
         title='FPS:',
         items=fps_pool,
-        default=1,
+        default=2,
         style=pygame_menu.widgets.SELECTOR_STYLE_FANCY
     )
     settings_menu.add.button("Back", pygame_menu.events.RESET)
@@ -80,7 +80,7 @@ def main():
     menu = pygame_menu.Menu("Super Snakes and Ladders", width, height, theme=theme)
     menu.add.button(
         "Play",
-        lambda: Game(screen, clock, font, w=width, h=height, fps=fps_selector.get_value()[0][1], num_players=2, 
+        lambda: Game(screen, clock, font, w=width, h=height, fps=fps_selector.get_value()[0][1], num_players=2,
         player_icons=[p1_icon_selector.get_value()[0][1], p2_icon_selector.get_value()[0][1]], board=board_selector.get_value()[0][1]),
     )
     menu.add.button("Help", help_menu)
