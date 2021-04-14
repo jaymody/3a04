@@ -1,15 +1,16 @@
+from pygame import draw
 from pygame.locals import *
 import pygame
 import sys
 import random
 
 # constants
-DARK_BLUE = (26, 27, 41)
-OFFWHITE = (255, 240, 219)
-GREEN = (36, 201, 94)
-YELLOW = (245, 235, 47)
+RICH_BLACK = (26, 27, 41)
+AZURE = (230, 250, 252)
+EMERALD = (47, 191, 113)
+PRINCETON_ORANGE = (237, 125, 58)
 ORANGE = (247, 149, 27)
-RED = (255, 59, 59)
+RED = (239, 45, 86)
 
 def draw_text(text, font, color, screen, x, y, center=True):
     textobj = font.render(text, 1, color)
@@ -82,15 +83,15 @@ class Snake(pygame.sprite.Sprite):
         if self.current_health > self.target_health:
             self.current_health -= self.health_change_speed
             transition_width = (self.current_health - self.target_health) // self.health_ratio
-            transition_colour = YELLOW
+            transition_colour = PRINCETON_ORANGE
 
         hp_rect  = pygame.Rect((self.width - self.health_bar_length)/2, self.height/20, self.current_health / self.health_ratio, 25)
         transition_bar_rect  = pygame.Rect(hp_rect.right - transition_width, self.height/20, transition_width, 25)
 
         pygame.draw.rect(self.screen, RED, hp_rect)
         pygame.draw.rect(self.screen, transition_colour, transition_bar_rect)
-        pygame.draw.rect(self.screen, OFFWHITE, ((self.width - self.health_bar_length)/2, self.height/20, self.health_bar_length, 25), 3)
-        draw_text("HP: " + str(self.current_health), self.font, OFFWHITE, self.screen, self.width/2, transition_bar_rect.centery)
+        pygame.draw.rect(self.screen, AZURE, ((self.width - self.health_bar_length)/2, self.height/20, self.health_bar_length, 25), 3)
+        draw_text("HP: " + str(self.current_health), self.font, AZURE, self.screen, self.width/2, transition_bar_rect.centery)
 
     def change_snake(self, win):
         if win:
@@ -114,7 +115,7 @@ class Snake(pygame.sprite.Sprite):
 # UI
 # snake movement
 
-class TypingGame:
+class SnakeCharmer:
 
     spawn_word_event = pygame.USEREVENT + 1
     spawn_delay = 250
@@ -126,8 +127,10 @@ class TypingGame:
         pygame.mixer.init()
         self.correct_word = pygame.mixer.Sound("./assets/snake_charm/correct.mp3")
         self.incorrect_word = pygame.mixer.Sound("./assets/snake_charm/incorrect.mp3")
-        self.bgm = pygame.mixer.Sound("./assets/snake_charm/not_kahoot.mp3")
-        self.bgm.set_volume(0.9)
+        self.type = pygame.mixer.Sound("./assets/snake_charm/type.wav")
+        self.type.set_volume(0.4)
+
+        self.instructions_img = pygame.image.load('./assets/snake_charm/instructions.png')
 
         pygame.key.set_repeat(400, 35)
 
@@ -145,7 +148,7 @@ class TypingGame:
         self.game_over = False
         self.win = False
         self.start_game = False
-        self.spawned_words = [("", 0, DARK_BLUE), ("", 0, DARK_BLUE), ("", 0, DARK_BLUE), ("", 0, DARK_BLUE)]
+        self.spawned_words = [("", 0, RICH_BLACK), ("", 0, RICH_BLACK), ("", 0, RICH_BLACK), ("", 0, RICH_BLACK)]
         self.prev_words = []
         self.prev_word_index = -1
         self.snake = pygame.sprite.GroupSingle(Snake(screen, width, height, font, self.diff.snake_hp()))
@@ -195,14 +198,14 @@ class TypingGame:
         for i, word in enumerate(self.spawned_words):
             if (curr_time - word[1] > self.diff.word_multi() * len(word[0])):
                 self.prev_words_queue(word[0])
-                self.spawned_words[i] = ("", word[1], DARK_BLUE)
+                self.spawned_words[i] = ("", word[1], RICH_BLACK)
 
     def get_colour(self, len, spawn_time):
         diff_time = self.diff.word_multi() * len
         if (spawn_time < diff_time / 3):
-            return GREEN
+            return EMERALD
         elif (spawn_time < diff_time / 3 * 2):
-            return YELLOW
+            return PRINCETON_ORANGE
         return RED
 
     # could probably math it out instead of hard coding
@@ -218,13 +221,91 @@ class TypingGame:
     def draw_snake(self):
         self.snake.draw(self.screen)
         self.snake.update()
+
+    def instructions(self):
+
+        running = True
+        click = False
+
+        self.spawned_words = [(self.spawn_word(), 0, EMERALD), (self.spawn_word(), 0, PRINCETON_ORANGE), (self.spawn_word(), 0, RED), (self.spawn_word(), 0, EMERALD)]
+        while running:
+            self.clock.tick(self.fps)
     
+            self.screen.fill(RICH_BLACK)
+           
+            self.screen.blit(self.instructions_img, (0, 0))
+
+            mx, my = pygame.mouse.get_pos()
+
+            back_button = pygame.Rect(50, 100, 100, 40)
+            back_button.center = (self.width/18, self.height/7*6)
+
+            if back_button.collidepoint((mx, my)):
+                if click:
+                    running = False
+                    break
+
+            click = False
+
+            pygame.draw.rect(self.screen, AZURE, back_button, 0, 100)
+            draw_text('Back', self.font, RICH_BLACK, self.screen, self.width/18, self.height/7*6)
+
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        click = True
+            
+            pygame.display.update()
+
+    def menu(self):
+
+        click = False
+        
+        while not self.start_game:
+
+            self.clock.tick(self.fps)
+            self.screen.fill(RICH_BLACK)
+            draw_text("Welcome to Snake Charmer!", self.font, AZURE, self.screen, self.width/2, self.height/4)
+            mx, my = pygame.mouse.get_pos()
+    
+            play_button = pygame.Rect(50, 100, 200, 50)
+            instruction_button = pygame.Rect(50, 200, 200, 50)
+            play_button.center = (self.width/2, self.height/2 - 50)
+            instruction_button.center = (self.width/2, self.height/2 + 50)
+
+            if play_button.collidepoint((mx, my)):
+                if click:
+                    self.start_game = True
+                    break
+            if instruction_button.collidepoint((mx, my)):
+                if click:
+                    self.instructions()
+
+            pygame.draw.rect(self.screen, AZURE, play_button, 0, 100)
+            draw_text('Play Game', self.font, RICH_BLACK, self.screen, self.width/2, self.height/2 - 50)
+            pygame.draw.rect(self.screen, AZURE, instruction_button, 0, 100)
+            draw_text('Instructions', self.font, RICH_BLACK, self.screen, self.width/2, self.height/2 + 50)
+    
+            click = False
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        click = True
+    
+            pygame.display.update()
+
     def user_submit(self):
         correct = False
         for i, word in enumerate(self.spawned_words):
             if (self.typed_word.lower() == word[0].lower() and self.typed_word != ""):
                 correct = True
-                self.spawned_words[i] = ("", -9999, DARK_BLUE)
+                self.spawned_words[i] = ("", -9999, RICH_BLACK)
                 self.prev_word_index = i
                 pygame.time.set_timer(self.clear_prev_word_event, self.clear_delay, True)
                 self.prev_words_queue(word[0])
@@ -244,22 +325,12 @@ class TypingGame:
         while True:
             
             # start game loop
-            while not self.start_game:
-                self.clock.tick(self.fps)
-                self.screen.fill(DARK_BLUE)
-                draw_text("Welcome to Snake Charmer! Can you charm the snake before it runs away?", self.font, OFFWHITE, self.screen, self.width/2, self.height/2 - 10)
-                draw_text("Press any button to get started", self.font, OFFWHITE, self.screen, self.width/2, self.height/2 + 10)
-                for event in pygame.event.get():
-                    if event.type == KEYDOWN:
-                        self.start_game = True
-                    elif event.type == QUIT:
-                        pygame.quit()
-                        sys.exit()
-                pygame.display.update()
+            self.menu()
 
             # main game loop
+            self.spawned_words = [("", 0, RICH_BLACK), ("", 0, RICH_BLACK), ("", 0, RICH_BLACK), ("", 0, RICH_BLACK)]
+
             pygame.time.set_timer(self.spawn_word_event, self.spawn_delay)
-            pygame.mixer.Sound.play(self.bgm)
 
             start_tick = pygame.time.get_ticks() / 1000
             end_tick = pygame.time.get_ticks() / 1000
@@ -267,13 +338,15 @@ class TypingGame:
             while not self.game_over:
 
                 self.clock.tick(self.fps)
-                self.screen.fill(DARK_BLUE)
+                self.screen.fill(RICH_BLACK)
                 elapsed_time = end_tick - start_tick
-                draw_text("Time Left: " + str(round(self.total_time - elapsed_time, 3)), self.font, OFFWHITE, self.screen, self.width/12, self.height/20, False)
+                draw_text("Time Left: " + str(round(self.total_time - elapsed_time, 3)), self.font, AZURE, self.screen, self.width/12, self.height/20, False)
                 end_tick = pygame.time.get_ticks() / 1000
 
+                # check to see if the game is lost
                 if (elapsed_time > self.total_time):
                     self.game_over = True
+                    break
 
                 # draw boss snake
                 self.draw_snake()
@@ -282,7 +355,7 @@ class TypingGame:
                 for i in range(len(self.spawned_words)):
                     bg = pygame.Rect(self.width, self.height, 240, 120)
                     bg.center = self.calc_word_pos(i)
-                    pygame.draw.rect(self.screen, OFFWHITE, bg, 4)
+                    pygame.draw.rect(self.screen, AZURE, bg, 4, 15)
 
                 # draws all words
                 for i, word in enumerate(self.spawned_words):
@@ -290,20 +363,21 @@ class TypingGame:
                     word_pos = self.calc_word_pos(i)
                     if (word[0] != ""):
                         draw_text(word[0], self.font, word[2], self.screen, word_pos[0], word_pos[1] - 20)
-                        draw_text(str(len(word[0]) * self.diff.damage_multi()), self.font, OFFWHITE, self.screen, word_pos[0], word_pos[1] + 20)
+                        draw_text(str(len(word[0]) * self.diff.damage_multi()), self.font, AZURE, self.screen, word_pos[0], word_pos[1] + 20)
 
                  # draws background of where user types
                 typed_bg = pygame.Rect(self.width, self.height, 250, 45)
                 typed_bg.center = (self.width/2, self.height/2)
-                pygame.draw.rect(self.screen, OFFWHITE, typed_bg)
+                pygame.draw.rect(self.screen, AZURE, typed_bg, 0, 15)
                 # draws users text
-                draw_text(self.typed_word, self.font, DARK_BLUE, self.screen, self.width/2, self.height/2)
+                draw_text(self.typed_word, self.font, RICH_BLACK, self.screen, self.width/2, self.height/2)
 
                 # despawns any expired words
                 self.despawn_word(elapsed_time)
 
                 # check to see if game is won
                 if self.snake.sprite.get_visual_hp() <= 0:
+                    self.game_over = True
                     break
 
                 for event in pygame.event.get():
@@ -313,35 +387,38 @@ class TypingGame:
                     elif event.type == self.spawn_word_event:
                         index = self.free_index()
                         if (index != -1):
-                            self.spawned_words[index] = ((self.spawn_word(), elapsed_time, GREEN))
+                            self.spawned_words[index] = ((self.spawn_word(), elapsed_time, EMERALD))
                     elif event.type == self.clear_prev_word_event:
                         self.prev_word_index = -1
                     elif event.type == KEYDOWN:
                         if event.key == K_RETURN:
                             self.user_submit()
                         elif event.key == K_BACKSPACE:
+                            pygame.mixer.Sound.play(self.type)
+                            pygame.mixer.music.stop()
                             self.typed_word = self.typed_word[:-1]
                         elif event.key == K_ESCAPE:
                             self.typed_word = ""
                         else:
+                            pygame.mixer.Sound.play(self.type)
+                            pygame.mixer.music.stop()
                             if (self.typed_word == "Start Typing..."):
                                 self.typed_word = ""
                             self.typed_word += event.unicode
 
                 pygame.display.update()
 
-            # end game screen
-            self.bgm.stop()
-
-            if self.snake.sprite.get_actual_hp() <= 0:
-                self.win = True
-            self.screen.fill(DARK_BLUE)
-            self.snake.sprite.change_snake(self.win)
-            self.snake.draw(self.screen)
-            draw_text("You win!" if self.win else "You lose!", self.font, OFFWHITE, self.screen, self.width/2, self.height/2 - 10)
-            pygame.display.update()
-            pygame.time.wait(1500)
-            return self.win
+            # end game loop
+            while True:
+                if self.snake.sprite.get_actual_hp() <= 0:
+                    self.win = True
+                self.screen.fill(RICH_BLACK)
+                self.snake.sprite.change_snake(self.win)
+                self.snake.draw(self.screen)
+                draw_text("You win!" if self.win else "You lose!", self.font, AZURE, self.screen, self.width/2, self.height/2 - 10)
+                pygame.display.update()
+                pygame.time.wait(1000)
+                return self.win
                 
 
 if __name__ == "__main__":
@@ -349,17 +426,17 @@ if __name__ == "__main__":
     width = 1280
     height = 720
     fps = 60
-    diff = "easy" # easy, medium or hard
+    diff = "hard" # easy, medium or hard
 
     # initialize
     pygame.init()
     pygame.font.init()
-    font = pygame.font.SysFont("comicsansms", 20)
+    font = pygame.font.SysFont("timesnewroman", 20)
     screen = pygame.display.set_mode([width, height])
     pygame.display.set_caption('Snake Charmer 9000')
     clock = pygame.time.Clock()
 
     # start game
-    minigame = TypingGame(diff, screen, clock, font, width, height, fps)
+    minigame = SnakeCharmer(diff, screen, clock, font, width, height, fps)
     result = minigame.play_minigame()
     print(f"\n\nGame Result: {result}")
