@@ -2,15 +2,91 @@ import sys
 import time
 import random
 import pygame
+from pygame.locals import RLEACCEL
 
+rich_black = (1, 22, 39)
+red_crayola = (239, 45, 86)
+princeton_orange = (237, 125, 58)
+azure = (230, 250, 252)
+mantis = (140, 216, 103)
+emerald = (47, 191, 113)
+
+
+# fundamental colors
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
 white = (255, 255, 255)
 black = (0, 0, 0)
 
+class Cloud(pygame.sprite.Sprite):
+    def __init__(self, w, h, speed, size):
+        super().__init__()
+        surf = pygame.image.load("assets/ladder_climb/cloud.png").convert_alpha()
+        ratio = size / surf.get_height()
+        sw, sh = int(ratio*surf.get_width()), int(ratio*surf.get_height())
+        self.surf = pygame.transform.scale(surf, (sw, sh))
+        self.surf.set_colorkey((135, 206, 250), RLEACCEL)
+
+        if random.random() < 0.5:
+            xpos = random.randint(0, w//4)
+        else:
+            xpos = random.randint(3*w//4 - sw, w - sw)
+
+        self.rect = self.surf.get_rect(topleft=(xpos, -sh))
+        self.h = h
+        self.speed = speed
+
+    def update(self):
+        self.rect.move_ip(0, self.speed)
+        if self.rect.top >= self.h:
+            self.kill()
+
+class FallingSnake(pygame.sprite.Sprite):
+    def __init__(self, x, h, speed, size):
+        super().__init__()
+        self.x = x
+        self.h = h
+        self.speed = speed
+        self.size = size
+
+        surf = pygame.image.load("assets/ladder_climb/falling_snake.png").convert_alpha()
+        self.surf = pygame.transform.scale(surf, (size - 2, size))
+        self.surf.set_colorkey((135, 206, 250), RLEACCEL)
+
+        self.rect = self.surf.get_rect(topleft=(x + 1, -size))
+
+    def update(self):
+        self.rect.move_ip(0, self.speed)
+        if self.rect.top >= self.h:
+            self.kill()
+
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y, size, ladder_positions):
+        super().__init__()
+        surf = pygame.image.load("assets/ladder_climb/player.png").convert_alpha()
+        self.surf = pygame.transform.scale(surf, (size - 2, size))
+        self.surf.set_colorkey((135, 206, 250), RLEACCEL)
+
+        self.pos = 0
+        self.ladder_positions = ladder_positions
+        self.rect = self.surf.get_rect(topleft=(ladder_positions[self.pos] + 1, y))
+
+    def move_left(self):
+        self.pos = max(self.pos - 1, 0)
+
+    def move_right(self):
+        self.pos = min(self.pos + 1, len(self.ladder_positions))
+
+    def update(self):
+        self.rect.left = self.ladder_positions[self.pos] + 1
+
 
 class LadderClimb:
+    NEW_CLOUD = pygame.USEREVENT + 131
+    NEW_SNAKE = pygame.USEREVENT + 132
+
     def __init__(self, difficulty, screen, clock, font, w, h, fps):
         self.difficulty = difficulty
         self.screen = screen
@@ -28,54 +104,43 @@ class LadderClimb:
             pygame.Rect(cx + 1 * hw, 0, self.lad_w, self.h),
         ]
 
-        self.player_w = self.lad_w
-        self.player_h = self.player_w
-        self.ladder = 0  # the ladder the player is on
-
-        self.snakes = []
+        self.snakes = pygame.sprite.Group()
+        self.clouds = pygame.sprite.Group()
+        self.player = Player(
+            self.ladder_rects[0].left,
+            self.h - 2 * self.lad_w,
+            self.lad_w,
+            [rect.left for rect in self.ladder_rects]
+        )
 
         self.elapsed = 0
         if self.difficulty == "easy":
-            self.prob = 1.2
+            self.prob = 0.3
             self.speed = 7
             self.time_to_beat = 20
         elif self.difficulty == "medium":
-            self.prob = 1.4
-            self.speed = 9
+            self.prob = 0.35
+            self.speed = 8
             self.time_to_beat = 30
         elif self.difficulty == "hard":
-            self.prob = 1.6
-            self.speed = 10
+            self.prob = 0.4
+            self.speed = 9
             self.time_to_beat = 40
 
-    @property
-    def player_rect(self):
-        return pygame.Rect(
-            self.ladder_rects[self.ladder].left + 1,
-            self.h - 2 * self.player_h,
-            self.player_w - 2,
-            self.player_h,
-        )
+        pygame.time.set_timer(self.NEW_CLOUD, 500)
+        pygame.time.set_timer(self.NEW_SNAKE, 50)
 
-    def snake_rect(self, snake):
-        left = self.ladder_rects[snake[0]].left
-        return pygame.Rect(left, snake[1], self.lad_w, self.lad_w)
+        self.new_snake_allowed = True
 
-    def handle_snakes(self):
-        # move snakes
+    def tick_event(self):
         new_allowed = True
         for i, snake in enumerate(self.snakes):
-            if self.snake_rect(snake).colliderect(self.player_rect):
+            if snake.rect.colliderect(self.player.rect):
                 return True
-            if snake[1] < 2 * self.lad_w:
+            if snake.rect.top < 2 * self.lad_w:
                 new_allowed = False
-            self.snakes[i][1] += self.speed
-        self.snakes = [snake for snake in self.snakes if snake[1] < self.h]
-
-        # drop new snake with probability self.prob per second
-        if new_allowed and random.random() * self.fps < self.prob:
-            pos = random.randint(0, len(self.ladder_rects) - 1)
-            self.snakes.append([pos, 0])
+        self.new_snake_allowed = new_allowed
+        return False
 
     def handle_event(self, event):
         if event.type == pygame.QUIT or event.type == 32787:
@@ -84,13 +149,22 @@ class LadderClimb:
         elif event.type == pygame.KEYDOWN:
             key = event.key
             if key == pygame.K_LEFT:
-                self.ladder = max(self.ladder - 1, 0)
+                self.player.move_left()
             elif key == pygame.K_RIGHT:
-                self.ladder = min(self.ladder + 1, len(self.ladder_rects) - 1)
+                self.player.move_right()
+        elif event.type == self.NEW_CLOUD:
+            self.clouds.add(Cloud(self.w, self.h, self.speed, self.lad_w))
+        elif self.new_snake_allowed and event.type == self.NEW_SNAKE and random.random() < self.prob:
+            pos = random.randint(0, len(self.ladder_rects) - 1)
+            x = self.ladder_rects[pos].left
+            self.snakes.add(FallingSnake(x, self.h, self.speed, self.lad_w))
+
+        return False
 
     def draw(self):
         # clear screen and draw background
-        self.screen.fill(white)
+        # self.screen.fill(white)
+        self.screen.fill((135, 206, 250))
 
         # draw timer
         self.screen.blit(
@@ -102,12 +176,17 @@ class LadderClimb:
         for rect in self.ladder_rects:
             pygame.draw.rect(self.screen, black, rect, width=3)
 
+        # draw clouds
+        for cloud in self.clouds:
+            self.screen.blit(cloud.surf, cloud.rect)
+
         # draw snakes
         for snake in self.snakes:
-            pygame.draw.rect(self.screen, green, self.snake_rect(snake))
+            self.screen.blit(snake.surf, snake.rect)
 
         # draw player
-        pygame.draw.rect(self.screen, blue, self.player_rect)
+        self.screen.blit(self.player.surf, self.player.rect)
+        # pygame.draw.rect(self.screen, blue, self.)
 
     def play_minigame(self):
         """Return True if minigame is won, else False"""
@@ -115,6 +194,9 @@ class LadderClimb:
         pygame.display.update()
         start = time.time()
         while True:
+            if self.tick_event():
+                return False
+
             for event in pygame.event.get():
                 self.handle_event(event)
 
@@ -122,8 +204,9 @@ class LadderClimb:
             if self.elapsed > self.time_to_beat:
                 return True
 
-            if self.handle_snakes():
-                return False
+            self.clouds.update()
+            self.snakes.update()
+            self.player.update()
 
             self.clock.tick(self.fps)
 
@@ -135,7 +218,7 @@ if __name__ == "__main__":
     # constants
     width = 1280
     height = 720
-    fps = 60
+    fps = 144
 
     # initialize
     pygame.init()
