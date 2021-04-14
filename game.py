@@ -126,7 +126,7 @@ class Game:
 
         # players[a] = b, such that a is the player number and b is
         # their position on the board
-        self.players = [0] * num_players
+        self.players = [98] * num_players
 
         # turn represents the current player who has their turn
         self.turn = 0
@@ -433,8 +433,12 @@ class Game:
             # game logic
             game_won = self.play_turn()
             if game_won:
-                print(f"P{self.turn} WON")
-                self.draw_board("P{self.turn} WON THE GAME!!!")
+                print(f"P{self.turn + 1} WON")
+                # draw background (draws over everything, acts as a screen clear)
+                self.screen.fill(azure)
+                # draw the prompt
+                draw_text(f"P{self.turn + 1} WON", self.font, rich_black, self.screen, *self.box_prompt.center)
+
                 pygame.display.update()
                 pygame.time.wait(2000)
                 return
