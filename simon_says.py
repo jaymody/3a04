@@ -11,6 +11,12 @@ blue = (0, 0, 255)
 white = (255, 255, 255)
 black = (0, 0, 0)
 pink = (150, 0, 150)
+rich_black = (1, 22, 39)
+red_crayola = (239, 45, 86)
+princeton_orange = (237, 125, 58)
+azure = (230, 250, 252)
+mantis = (140, 216, 103)
+emerald = (47, 191, 113)
 
 
 class Button:
@@ -134,7 +140,7 @@ class SimonSays:
 
         # draw rectangles
         for rect in self.rects:
-            pygame.draw.rect(self.screen, pink, rect)
+            pygame.draw.rect(self.screen, red_crayola, rect)
 
         # show tiles
         pygame.display.update()
@@ -149,7 +155,7 @@ class SimonSays:
             pygame.time.wait(self.time_to_see_square)
 
             # undraw grey rect
-            pygame.draw.rect(self.screen, pink, rect)
+            pygame.draw.rect(self.screen, red_crayola, rect)
             pygame.display.update()
 
         cur_square = 0
@@ -170,7 +176,7 @@ class SimonSays:
                                 pygame.draw.rect(self.screen, blue, rect)
                                 pygame.display.update()
                                 pygame.time.wait(200)
-                                pygame.draw.rect(self.screen, pink, rect)
+                                pygame.draw.rect(self.screen, red_crayola, rect)
                                 pygame.display.update()
                                 if cur_square >= len(grey_rects):
                                     return True
