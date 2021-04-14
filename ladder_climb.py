@@ -69,7 +69,7 @@ class Player(pygame.sprite.Sprite):
         self.pos = max(self.pos - 1, 0)
 
     def move_right(self):
-        self.pos = min(self.pos + 1, len(self.ladder_positions))
+        self.pos = min(self.pos + 1, len(self.ladder_positions) - 1)
 
     def update(self):
         self.rect.left = self.ladder_positions[self.pos] + 1
